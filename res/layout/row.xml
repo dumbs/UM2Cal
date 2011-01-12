@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:orientation="horizontal"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent" android:background="#FFF">
 
 	<LinearLayout android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:orientation="vertical">
 
 		<TextView android:layout_width="wrap_content" android:text="@+id/start"
-			android:layout_height="wrap_content" android:id="@+id/start" />
+			android:layout_height="wrap_content" android:id="@+id/start"
+			android:textColor="#000" android:textStyle="bold" />
 
 		<TextView android:layout_width="wrap_content" android:text="@+id/end"
-			android:layout_height="wrap_content" android:id="@+id/end"/>
+			android:layout_height="wrap_content" android:id="@+id/end"
+			android:textColor="#000" android:textStyle="bold" />
 
-	
-</LinearLayout>
+
+	</LinearLayout>
 
 	<TextView android:layout_width="wrap_content" android:text="@+id/type"
 		android:layout_height="wrap_content" android:id="@+id/type"
 		android:paddingLeft="10px" android:paddingRight="10px"
-		android:paddingTop="13px" android:paddingBottom="13px" />
+		android:paddingTop="13px" android:paddingBottom="13px"
+		android:textColor="#000" android:textStyle="bold" />
 
 	<TextView android:layout_width="wrap_content" android:text="@+id/cours"
-		android:layout_height="wrap_content" android:id="@+id/cours" android:singleLine="true"/>
-		
+		android:layout_height="wrap_content" android:id="@+id/cours"
+		android:singleLine="true" android:textColor="#000" android:textStyle="bold" />
+
 </LinearLayout>

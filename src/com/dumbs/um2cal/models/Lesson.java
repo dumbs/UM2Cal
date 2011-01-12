@@ -1,6 +1,6 @@
 package com.dumbs.um2cal.models;
 
-import java.util.Date;
+import java.util.Calendar;
 
 
 public class Lesson {
@@ -14,8 +14,8 @@ public class Lesson {
 	private String title;
 	private String type;
 	private String group;
-	private Date end;
-	private Date start;
+	private Calendar end;
+	private Calendar start;
 	
 	public Lesson() {
 		this.id = -1;
@@ -34,7 +34,7 @@ public class Lesson {
 	
 	public Lesson(int id, boolean allDay, boolean editable, boolean readOnly,
 			int model, String description, String location, String title,
-			String type, String group, Date end, Date start) {
+			String type, String group, Calendar end, Calendar start) {
 		super();
 		this.id = id;
 		this.allDay = allDay;
@@ -82,7 +82,7 @@ public class Lesson {
 				+ editable + ", readOnly=" + readOnly + ", model=" + model
 				+ ", description=" + description + ", location=" + location
 				+ ", title=" + title + ", type=" + type + ", group=" + group
-				+ ", end=" + end + ", start=" + start + "]";
+				+ ", end=" + end.getTime().toString() + ", start=" + start.getTime().toString() + "]";
 	}
 
 	public int getId() {
@@ -97,7 +97,7 @@ public class Lesson {
 	public boolean isReadOnly() {
 		return readOnly;
 	}
-	public int isModel() {
+	public int getModel() {
 		return model;
 	}
 	public String getDescription() {
@@ -115,10 +115,10 @@ public class Lesson {
 	public String getGroup() {
 		return group;
 	}
-	public Date getEnd() {
+	public Calendar getEnd() {
 		return end;
 	}
-	public Date getStart() {
+	public Calendar getStart() {
 		return start;
 	}
 	public void setId(int id) {
@@ -151,10 +151,10 @@ public class Lesson {
 	public void setGroup(String group) {
 		this.group = group;
 	}
-	public void setEnd(Date end) {
+	public void setEnd(Calendar end) {
 		this.end = end;
 	}
-	public void setStart(Date start) {
+	public void setStart(Calendar start) {
 		this.start = start;
 	}
 	
