@@ -25,7 +25,6 @@ import com.google.gson.stream.JsonReader;
 public class Main extends ListActivity {
 	
 	private Lessons lessons;
-	Calendar rightNow;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -34,48 +33,58 @@ public class Main extends ListActivity {
 		setContentView(R.layout.main);
 		
 		try {
-			rightNow = new GregorianCalendar(2010,11,13);
-			System.out.println(rightNow.getTime());
-			Calendar end = new GregorianCalendar();
-			end.set(Calendar.DAY_OF_MONTH, end.get(Calendar.DAY_OF_MONTH) + 7);
-			//"http://edt.ufr.univ-montp2.fr/php/ajax/OccList.php?start=2010-12-13&end=2010-12-20&sel=Etp%3A+124"
+			//Create the different calendar we need
+			Calendar monday = new GregorianCalendar();
+			Calendar saturday = new GregorianCalendar();
 			
+			//Set the calendars day of week to Monday and Saturday
+			monday.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+			saturday.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
 			
-			String urlS = String.format("http://edt.ufr.univ-montp2.fr/php/ajax/OccList.php?start=%1$tY-%1$tm-%1$te&end=%2$tY-%2$tm-%2$te&sel=Etp%%3A+124", rightNow, end);
-			System.out.println(urlS);
-			URL url = new URL("http://edt.ufr.univ-montp2.fr/php/ajax/OccList.php?start=2010-12-13&end=2010-12-20&sel=Etp%3A+124%%2C160");
+			//For test uncomment on the following
+			monday = new GregorianCalendar(2010,11,13);
+			saturday = new GregorianCalendar(2010,11,13 + 6);
+			
+			//Format the URL used to get information about the courses.
+			String urlS = String.format("http://edt.ufr.univ-montp2.fr/php/ajax/OccList.php?start=%1$tY-%1$tm-%1$te&end=%2$tY-%2$tm-%2$te&sel=Etp%%3A+124%%2C160", monday, saturday);
+			URL url = new URL(urlS);
+			//Makes an JsonReader and set the json code got from URL. 
 			JsonReader reader = new JsonReader(new InputStreamReader(url.openStream(), "UTF-8"));
+			//Transforms the json code in an instance of Lessons.
 			lessons = new Lessons(reader);
 			reader.close();
+			
+			monday = null;
+			saturday = null;
+			
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.exit(0);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.exit(0);
 		}
-		
 
 		// create our list and custom adapter
 		SeparatedListAdapter adapter = new SeparatedListAdapter(this);
 		
-		int index = 1;
-		while (!lessons.getLessons().isEmpty() && index++ <= 7) {
-			System.out.println(new SimpleDateFormat("E").format(rightNow.getTime()));
-			adapter.addSection(new SimpleDateFormat("E").format(rightNow.getTime()),
-					new LessonAdapter(this, lessons.getLessonsForDay(rightNow.get(Calendar.DAY_OF_WEEK))));
-
-			for (Lesson l : lessons.getLessonsForDay(rightNow.get(Calendar.DAY_OF_WEEK))) {
-				System.out.println(l);
-			}
-			
-			rightNow.set(Calendar.DAY_OF_WEEK, rightNow.get(Calendar.DAY_OF_WEEK) + 1);
+		int dayOfWeek = Calendar.SUNDAY;
+		Calendar c = new GregorianCalendar();
+		// For test uncomment on the following
+		c = new GregorianCalendar(2010,11,13);
+		while (!lessons.getLessons().isEmpty() && dayOfWeek++ != Calendar.SATURDAY) {
+			c.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+			System.out.println(dayOfWeek);
+			adapter.addSection(new SimpleDateFormat("EEEE, dd MMMM").format(c.getTime()),
+					new LessonAdapter(this, lessons.getLessonsForDay(dayOfWeek)));
 		}
+		
+		c = null;
 		
 		setListAdapter(adapter);
 	}
 	
-	class ViewWrapper {
+	private class ViewWrapper {
 		View base;
 
 		TextView start = null;
@@ -116,7 +125,7 @@ public class Main extends ListActivity {
 		}
 	}
 	
-	class LessonAdapter extends ArrayAdapter<Lesson> {
+	private class LessonAdapter extends ArrayAdapter<Lesson> {
 		
 		Activity context;
 		

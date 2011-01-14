@@ -74,7 +74,6 @@ public class Lessons {
 				minute = Integer.valueOf(endS.substring(14, 16));
 				second = Integer.valueOf(endS.substring(17, 19));
 				end = new GregorianCalendar(year, month, day, hour, minute, second);
-				System.out.println("End = "+ end.getTime());
 			} else if (name.equals("start")) {
 				String startS = reader.nextString();
 				year = Integer.valueOf(startS.substring(0, 4));
@@ -84,7 +83,6 @@ public class Lessons {
 				minute = Integer.valueOf(startS.substring(14, 16));
 				second = Integer.valueOf(startS.substring(17, 19));
 				start = new GregorianCalendar(year, month, day, hour, minute, second);
-				System.out.println("Start = "+ start.getTime());
 			} else {
 				reader.skipValue();
 			}
