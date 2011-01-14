@@ -10,18 +10,18 @@ import com.google.gson.stream.JsonReader;
 
 // TODO : Ajouter une methode pour recupere les cours d'un certain jour.
 
-public class Lessons {
-	private List<Lesson> lessons = new ArrayList<Lesson>();
+public class Courses {
+	private List<Course> courses = new ArrayList<Course>();
 
-	public Lessons (JsonReader reader) throws IOException {
+	public Courses (JsonReader reader) throws IOException {
 		reader.beginArray();
 		while (reader.hasNext()) {
-			lessons.add(readLesson(reader));
+			courses.add(readCourse(reader));
 		}
 		reader.endArray();
 	}
 
-	private Lesson readLesson(JsonReader reader) throws IOException {
+	private Course readCourse(JsonReader reader) throws IOException {
 		int id = -1;
 		int model = -1;
 		boolean allDay = false;
@@ -88,12 +88,12 @@ public class Lessons {
 			}
 		}
 		reader.endObject();
-		return new Lesson(id, allDay, editable, readOnly, model, description, location, title, type, group, end, start);
+		return new Course(id, allDay, editable, readOnly, model, description, location, title, type, group, end, start);
 	}
 
 
-	public List<Lesson> getLessons() {
-		return lessons;
+	public List<Course> getCourses() {
+		return courses;
 	}
 
 
@@ -101,21 +101,19 @@ public class Lessons {
 	 * @param dayOfWeek An integer which represente a day of week. It's between 0 and 6
 	 * @return a list of all lesson which takes place on day of week.
 	 */
-	public List<Lesson> getLessonsForDay(int dayOfWeek) {
-		List<Lesson> result = new ArrayList<Lesson>();
+	public List<Course> getCourses(int dayOfWeek) {
+		List<Course> result = new ArrayList<Course>();
 
-		for (Lesson l : lessons) {
-			if (l.getStart().get(Calendar.DAY_OF_WEEK) == dayOfWeek)
-				result.add(l);
+		for (Course c : courses) {
+			if (c.getStart().get(Calendar.DAY_OF_WEEK) == dayOfWeek)
+				result.add(c);
 		}
 		return (result);
 	}
 
 	@Override
 	public String toString() {
-		return "Lessons [lessons=" + lessons + "]";
+		return "Courses [courses=" + courses + "]";
 	}
-
-
 
 }

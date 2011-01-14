@@ -18,13 +18,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.dumbs.um2cal.models.Lesson;
-import com.dumbs.um2cal.models.Lessons;
+import com.dumbs.um2cal.models.Course;
+import com.dumbs.um2cal.models.Courses;
 import com.google.gson.stream.JsonReader;
 
 public class Main extends ListActivity {
 	
-	private Lessons lessons;
+	private Courses courses;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -51,7 +51,7 @@ public class Main extends ListActivity {
 			//Makes an JsonReader and set the json code got from URL. 
 			JsonReader reader = new JsonReader(new InputStreamReader(url.openStream(), "UTF-8"));
 			//Transforms the json code in an instance of Lessons.
-			lessons = new Lessons(reader);
+			courses = new Courses(reader);
 			reader.close();
 			
 			monday = null;
@@ -72,11 +72,10 @@ public class Main extends ListActivity {
 		Calendar c = new GregorianCalendar();
 		// For test uncomment on the following
 		c = new GregorianCalendar(2010,11,13);
-		while (!lessons.getLessons().isEmpty() && dayOfWeek++ != Calendar.SATURDAY) {
+		while (!courses.getCourses().isEmpty() && dayOfWeek++ != Calendar.SATURDAY) {
 			c.set(Calendar.DAY_OF_WEEK, dayOfWeek);
-			System.out.println(dayOfWeek);
 			adapter.addSection(new SimpleDateFormat("EEEE, dd MMMM").format(c.getTime()),
-					new LessonAdapter(this, lessons.getLessonsForDay(dayOfWeek)));
+					new CourseAdapter(this, courses.getCourses(dayOfWeek)));
 		}
 		
 		c = null;
@@ -125,11 +124,11 @@ public class Main extends ListActivity {
 		}
 	}
 	
-	private class LessonAdapter extends ArrayAdapter<Lesson> {
+	private class CourseAdapter extends ArrayAdapter<Course> {
 		
 		Activity context;
 		
-		public LessonAdapter(Activity context, List<Lesson> lessons) {
+		public CourseAdapter(Activity context, List<Course> lessons) {
 			super(context, R.layout.row, lessons);
 			
 			this.context = context;

@@ -3,7 +3,7 @@ package com.dumbs.um2cal.models;
 import java.util.Calendar;
 
 
-public class Lesson {
+public class Course {
 	private int id;
 	private int model;
 	private boolean allDay;
@@ -17,7 +17,7 @@ public class Lesson {
 	private Calendar end;
 	private Calendar start;
 	
-	public Lesson() {
+	public Course() {
 		this.id = -1;
 		this.model = -1;
 		this.allDay = false;
@@ -32,7 +32,7 @@ public class Lesson {
 		this.start = null;
 	}
 	
-	public Lesson(int id, boolean allDay, boolean editable, boolean readOnly,
+	public Course(int id, boolean allDay, boolean editable, boolean readOnly,
 			int model, String description, String location, String title,
 			String type, String group, Calendar end, Calendar start) {
 		super();
@@ -78,7 +78,7 @@ public class Lesson {
 	
 	@Override
 	public String toString() {
-		return "Cours [id=" + id + ", allDay=" + allDay + ", editable="
+		return "Course [id=" + id + ", allDay=" + allDay + ", editable="
 				+ editable + ", readOnly=" + readOnly + ", model=" + model
 				+ ", description=" + description + ", location=" + location
 				+ ", title=" + title + ", type=" + type + ", group=" + group
