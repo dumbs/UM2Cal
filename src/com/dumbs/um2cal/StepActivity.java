@@ -10,25 +10,34 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.dumbs.um2cal.models.Step;
-import com.dumbs.um2cal.models.Steps;
+import com.dumbs.um2cal.models.Program;
+import com.dumbs.um2cal.models.Programs;
 
 public class StepActivity extends ListActivity {
 
-	private Steps steps;
+	private Programs programs;
+	private StepsAdapter adapter;
+	private ProgressDialog dialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		ProgressDialog dialog = ProgressDialog.show(this, "", 
+		dialog = ProgressDialog.show(this, "", 
 				"Chargement de la liste des cours. Veuillez attendre...", true);
-		steps = Steps.getInstance();
-		dialog.dismiss();
+		programs = Programs.getInstance(this);
 		
-		setListAdapter(new StepsAdapter(this, steps.getSteps()));
+		if (programs != null) {
+			adapter = new StepsAdapter(this, programs.getSteps());
+			setListAdapter(adapter);
+		}
 	}
 
+	public void reloadData() {
+		dialog.dismiss();
+		adapter.notifyDataSetChanged();
+	}
+	
 	private class ViewWrapper {
 		View base;
 
@@ -54,12 +63,12 @@ public class StepActivity extends ListActivity {
 		}
 	}
 
-	private class StepsAdapter extends ArrayAdapter<Step> {
+	private class StepsAdapter extends ArrayAdapter<Program> {
 		Activity context;
 
-		public StepsAdapter(Activity context, Step[] steps) {
+		public StepsAdapter(Activity context, Program[] steps) {
 			super(context, R.layout.steprow, steps);
-
+			
 			this.context = context;
 		}
 

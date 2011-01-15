@@ -5,31 +5,41 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
 
+import android.app.Activity;
+
+import com.dumbs.um2cal.StepActivity;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
-public class Steps {
-	private static Steps instance = null;
+public class Programs implements Runnable {
+	private static Programs instance = null;
 	
-	private Step[] steps;
+	private Activity context;
+	private Program[] programs;
 
-	private Steps() {
+	private Programs(Activity context) {
 		//Transforms the json code in of instances Step.
-		this.completeSteps();
+		this.context = context;
+		this.programs = new Program[0];
 	}
 	
-	public final synchronized static Steps getInstance() {
+	public final synchronized static Programs getInstance(Activity context) {
 		if (instance == null) 
-            instance = new Steps();
+            instance = new Programs(context);
         return (instance);
 	}
 
-	public final synchronized static void reload() {
-		instance.completeSteps();
+	public void run() {
+		this.completePrograms();
+		((StepActivity)context).reloadData();
 	}
 	
-	public Step[] getSteps() {
-		return steps;
+	public final synchronized static void reload() {
+		instance.completePrograms();
+	}
+	
+	public Program[] getSteps() {
+		return programs;
 	}
 	
 
@@ -38,7 +48,7 @@ public class Steps {
 	 * http://edt.ufr.univ-montp2.fr/php/ajax/EtpGrid.php.
 	 * The json recovered is converted into <code>ArrayList<Career></code> which contains all steps.
 	 */
-	private void completeSteps() {
+	private void completePrograms() {
 		int page = 1;
 		int total = 1;
 		int nbRows = 200;
@@ -58,9 +68,9 @@ public class Steps {
 					if (name.equals("total")) {
 						total = reader.nextInt();
 					} else if (name.equals("records")) {
-						steps = new Step[reader.nextInt()];
+						programs = new Program[reader.nextInt()];
 					} else if (name.equals("rows")) {
-						steps = gson.fromJson(reader, Step[].class);
+						programs = gson.fromJson(reader, Program[].class);
 					} else {
 						reader.skipValue();
 					}
@@ -77,7 +87,7 @@ public class Steps {
 
 	@Override
 	public String toString() {
-		return "Steps [steps=" + Arrays.toString(steps) + "]";
+		return "Steps [steps=" + Arrays.toString(programs) + "]";
 	}
 
 }

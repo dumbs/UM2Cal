@@ -1,7 +1,7 @@
 package com.dumbs.um2cal.models;
 
 
-public class Step {
+public class Program {
 	
 	private final static int CODE = 0x0;
 	private final static int NAME = 0x1;
@@ -10,16 +10,16 @@ public class Step {
 	private int id;
 	private String[] cell;
 	
-	public Step() {
+	public Program() {
 		this.cell = new String[3];
 	}
 	
-	public Step(int id, String[] cell) {
+	public Program(int id, String[] cell) {
 		this.id = id;
 		this.cell = new String[3];
 	}
 
-	public Step(int id, String code, String name, String component) {
+	public Program(int id, String code, String name, String component) {
 		this.id = id;
 		setCode(code);
 		setName(name);
