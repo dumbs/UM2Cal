@@ -1,6 +1,8 @@
 package com.dumbs.um2cal.models;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -8,19 +10,59 @@ import java.util.List;
 
 import com.google.gson.stream.JsonReader;
 
-// TODO : Ajouter une methode pour recupere les cours d'un certain jour.
 
 public class Courses {
+	public static Courses instance = null;
 	private List<Course> courses = new ArrayList<Course>();
 
-	public Courses (JsonReader reader) throws IOException {
+	private Courses () throws IOException {
+		
+
+		//Transforms the json code in of instances Course.
+		this.completeCourses();
+				
+	}
+	public static synchronized Courses getInstance() throws IOException {
+		if (instance == null) {
+			instance = new Courses();
+		}
+		return (instance);
+	}
+	
+	public static synchronized void reload() throws IOException {
+		instance.completeCourses();
+	}
+	
+	private void completeCourses() throws IOException {
+		//Create the different calendar we need
+		Calendar monday = new GregorianCalendar();
+		Calendar saturday = new GregorianCalendar();
+
+		//Set the calendars day of week to Monday and Saturday
+		monday.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+		saturday.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+
+		//TODO : For test uncomment on the following
+		monday = new GregorianCalendar(2010,11,13);
+		saturday = new GregorianCalendar(2010,11,13 + 6);
+		
+		//Format the URL used to get information about the courses.
+		String urlS = String.format(Constant.edt+"OccList.php?start=%1$tY-%1$tm-%1$te&end=%2$tY-%2$tm-%2$te&sel=Etp%%3A+124%%2C160", monday, saturday);
+		URL url = new URL(urlS);
+		//Makes an JsonReader and set the json code got from URL. 
+		JsonReader reader = new JsonReader(new InputStreamReader(url.openStream(), "UTF-8"));
+		
 		reader.beginArray();
 		while (reader.hasNext()) {
 			courses.add(readCourse(reader));
 		}
 		reader.endArray();
-	}
+		reader.close();
 
+		monday = null;
+		saturday = null;
+	}
+	
 	private Course readCourse(JsonReader reader) throws IOException {
 		int id = -1;
 		int model = -1;
