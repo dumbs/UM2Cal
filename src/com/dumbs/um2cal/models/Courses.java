@@ -11,13 +11,11 @@ import java.util.List;
 import com.google.gson.stream.JsonReader;
 
 
-public class Courses {
+public class Courses implements Runnable {
 	public static Courses instance = null;
 	private List<Course> courses = new ArrayList<Course>();
-
+	
 	private Courses () throws IOException {
-		
-
 		//Transforms the json code in of instances Course.
 		this.completeCourses();
 				
@@ -27,6 +25,14 @@ public class Courses {
 			instance = new Courses();
 		}
 		return (instance);
+	}
+
+	public void run() {
+		try {
+			this.completeCourses();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static synchronized void reload() throws IOException {
@@ -157,5 +163,5 @@ public class Courses {
 	public String toString() {
 		return "Courses [courses=" + courses + "]";
 	}
-
+	
 }
