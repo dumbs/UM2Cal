@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +14,17 @@ import android.widget.TextView;
 import com.dumbs.um2cal.models.Program;
 import com.dumbs.um2cal.models.Programs;
 
-public class StepActivity extends ListActivity {
+public class ProgramActivity extends ListActivity {
 
 	private Programs programs;
-	private StepsAdapter adapter;
+	private ProgramsAdapter adapter;
 	private ProgressDialog dialog;
+	Handler handler = new Handler() {
+		@Override
+		public void handleMessage(android.os.Message msg) {
+			reloadData();
+		};
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,23 +32,33 @@ public class StepActivity extends ListActivity {
 		
 		dialog = ProgressDialog.show(this, "", 
 				"Chargement de la liste des cours. Veuillez attendre...", true);
-		programs = Programs.getInstance(this);
 		
-		if (programs != null) {
-			adapter = new StepsAdapter(this, programs.getSteps());
-			setListAdapter(adapter);
-		}
+		programs = new Programs();
+		
+		Thread th = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				programs.completePrograms();
+				handler.sendMessage(handler.obtainMessage());
+			}
+		});
+		th.start();
+		adapter = new ProgramsAdapter(this, programs.getPrograms());
 	}
+	
+	
 
 	public void reloadData() {
+		adapter = new ProgramsAdapter(this, programs.getPrograms());
+		setListAdapter(adapter);
 		dialog.dismiss();
-		adapter.notifyDataSetChanged();
 	}
 	
 	private class ViewWrapper {
 		View base;
 
-		TextView step = null;
+		TextView program = null;
 		TextView group = null;
 
 		ViewWrapper (View base) {
@@ -49,10 +66,10 @@ public class StepActivity extends ListActivity {
 		}
 
 		TextView getStep() {
-			if (step == null) {
-				step = (TextView) base.findViewById(R.id.step);
+			if (program == null) {
+				program = (TextView) base.findViewById(R.id.step);
 			}
-			return (step);
+			return (program);
 		}
 
 		TextView getGroup() {
@@ -63,11 +80,11 @@ public class StepActivity extends ListActivity {
 		}
 	}
 
-	private class StepsAdapter extends ArrayAdapter<Program> {
+	private class ProgramsAdapter extends ArrayAdapter<Program> {
 		Activity context;
 
-		public StepsAdapter(Activity context, Program[] steps) {
-			super(context, R.layout.steprow, steps);
+		public ProgramsAdapter(Activity context, Program[] programs) {
+			super(context, R.layout.steprow, programs);
 			
 			this.context = context;
 		}

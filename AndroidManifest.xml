@@ -8,7 +8,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".StepActivity" android:label="Parcours - Etape">
+		<activity android:name=".ProgramActivity" android:label="Parcours - Etape">
 		</activity>
 
 	</application>

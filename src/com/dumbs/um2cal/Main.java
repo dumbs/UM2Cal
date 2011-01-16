@@ -98,7 +98,7 @@ public class Main extends ListActivity {
 	private boolean applyMenuChoice(MenuItem item) {
 		switch (item.getItemId()) {
 		case STEPS:
-			startActivity(new Intent(this, StepActivity.class));
+			startActivity(new Intent(this, ProgramActivity.class));
 			return (true);
 		case RELOAD:
 			try {
