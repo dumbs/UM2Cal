@@ -11,35 +11,30 @@ import java.util.List;
 import com.google.gson.stream.JsonReader;
 
 
-public class Courses implements Runnable {
-	public static Courses instance = null;
-	private List<Course> courses = new ArrayList<Course>();
+public class Courses {
+	private List<Course> courses;
+	private int program;
+	//private String group;
 	
-	private Courses () throws IOException {
+	
+	public Courses (int program) {
 		//Transforms the json code in of instances Course.
-		this.completeCourses();
-				
-	}
-	public static synchronized Courses getInstance() throws IOException {
-		if (instance == null) {
-			instance = new Courses();
-		}
-		return (instance);
+		courses = new ArrayList<Course>();
+		//group = "";
+		this.program = program;
 	}
 
-	public void run() {
-		try {
-			this.completeCourses();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static synchronized void reload() throws IOException {
-		instance.completeCourses();
-	}
-	
-	private void completeCourses() throws IOException {
+	/**
+	 * This method collects on internet the list of courses and transforms it in a <code>List<Course></code>. 
+	 * 
+	 */
+	public void completeCourses() throws IOException {
+		//TODO : group will be a parameter
+		//String group = "%%2C160";
+		String group = "";
+		//TODO : program will be a parameter
+		//String program = "247";
+		
 		//Create the different calendar we need
 		Calendar monday = new GregorianCalendar();
 		Calendar saturday = new GregorianCalendar();
@@ -49,15 +44,15 @@ public class Courses implements Runnable {
 		saturday.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
 
 		//TODO : For test uncomment on the following
-		monday = new GregorianCalendar(2010,11,13);
-		saturday = new GregorianCalendar(2010,11,13 + 6);
-		
+		monday = new GregorianCalendar(2011,0,24);
+		saturday = new GregorianCalendar(2011,0,24 + 6);
+
 		//Format the URL used to get information about the courses.
-		String urlS = String.format(Constant.edt+"OccList.php?start=%1$tY-%1$tm-%1$te&end=%2$tY-%2$tm-%2$te&sel=Etp%%3A+124%%2C160", monday, saturday);
+		String urlS = String.format(Constant.edt+"OccList.php?start=%1$tY-%1$tm-%1$te&end=%2$tY-%2$tm-%2$te&sel=Etp%%3A+%3$s%4$s", monday, saturday, program, group);
 		URL url = new URL(urlS);
 		//Makes an JsonReader and set the json code got from URL. 
 		JsonReader reader = new JsonReader(new InputStreamReader(url.openStream(), "UTF-8"));
-		
+
 		reader.beginArray();
 		while (reader.hasNext()) {
 			courses.add(readCourse(reader));
@@ -68,7 +63,7 @@ public class Courses implements Runnable {
 		monday = null;
 		saturday = null;
 	}
-	
+
 	private Course readCourse(JsonReader reader) throws IOException {
 		int id = -1;
 		int model = -1;
@@ -82,7 +77,7 @@ public class Courses implements Runnable {
 		String group = null;
 		Calendar end = new GregorianCalendar();
 		Calendar start = new GregorianCalendar();
-		
+
 		int year = 0;
 		int month = 0;
 		int day = 0;
@@ -144,10 +139,9 @@ public class Courses implements Runnable {
 		return courses;
 	}
 
-
 	/**
-	 * @param dayOfWeek An integer which represente a day of week. It's between 0 and 6
-	 * @return a list of all lesson which takes place on day of week.
+	 * @param dayOfWeek An integer which represents a day of week. It's between 0 and 6
+	 * @return A list of all courses which take place on day of week.
 	 */
 	public List<Course> getCourses(int dayOfWeek) {
 		List<Course> result = new ArrayList<Course>();
@@ -163,5 +157,5 @@ public class Courses implements Runnable {
 	public String toString() {
 		return "Courses [courses=" + courses + "]";
 	}
-	
+
 }

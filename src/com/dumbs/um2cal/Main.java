@@ -12,6 +12,7 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,27 +22,89 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.dumbs.um2cal.models.Constant;
 import com.dumbs.um2cal.models.Course;
 import com.dumbs.um2cal.models.Courses;
 
 public class Main extends ListActivity {
 
-	private Courses courses;
 
 	public static final int STEPS = Menu.FIRST + 0x01;
 	public static final int RELOAD = Menu.FIRST + 0x02;
-	
+
 	public static final int PARAM = 0x01;
 
+	private ProgressDialog dialog;
+	private Courses courses;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		SharedPreferences mPrefs = getPreferences(MODE_PRIVATE);
+        int program = mPrefs.getInt(Constant.program, -1);
+        if (program == -1) {
+        	startActivityForResult(new Intent(this, ProgramActivity.class), PARAM);
+        } else {
+        	startCollectCourses(program);
+        	setAdapter();
+        }
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if (requestCode == PARAM) {
+			if (resultCode == RESULT_OK) {
+				startCollectCourses(data.getExtras().getInt(Constant.program));
+			}
+		}
+	}
+	
+	private void startCollectCourses(int program) {
+		dialog = ProgressDialog.show(this, "", 
+				"Chargement de la liste des cours. Veuillez attendre...", true);
 
-		this.completeCourses();
+		courses = new Courses(program);
+		
+		runOnUiThread(new Runnable() {
 
+			@Override
+			public void run() {
+				completeCourses();
+				if (dialog.isShowing())
+					dialog.dismiss();
+			}
+
+		});
+	}
+
+	private void completeCourses() {
+		try {
+			courses.completeCourses();
+			reloadData();
+		} catch (IOException e) {
+			if (dialog.isShowing())
+				dialog.dismiss();
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("UM2Cal")
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setMessage("Un problème est survenu.\nNous n'avons pas pu récupérer la liste des cours.")
+			.setCancelable(false)
+			.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
+		}
+	}
+
+	private void setAdapter() {
 		// create our list and custom adapter
 		SeparatedListAdapter adapter = new SeparatedListAdapter(this);
 
@@ -59,24 +122,9 @@ public class Main extends ListActivity {
 		setListAdapter(adapter);
 	}
 
-	private void completeCourses() {
-		ProgressDialog dialog = ProgressDialog.show(this, "", 
-				"Chargement de la liste des cours. Veuillez attendre...", true);
-		try {
-			courses = Courses.getInstance();
-		} catch (IOException e) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage("Un problème est survenu.\nNous n'avons pas pu récupérer la liste des cours")
-			.setCancelable(false)
-			.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					dialog.cancel();
-				}
-			});
-			AlertDialog alert = builder.create();
-			alert.show();
-		}
-		dialog.dismiss();
+	public void reloadData() {
+		setAdapter();
+
 	}
 
 	@Override
@@ -95,17 +143,23 @@ public class Main extends ListActivity {
 		return (applyMenuChoice(item) || super.onOptionsItemSelected(item));
 	}
 
+	
 	private boolean applyMenuChoice(MenuItem item) {
 		switch (item.getItemId()) {
 		case STEPS:
-			startActivity(new Intent(this, ProgramActivity.class));
+			startActivityForResult(new Intent(this, ProgramActivity.class), PARAM);
 			return (true);
 		case RELOAD:
 			try {
-			Courses.reload();
+				//TODO : A revoir.
+				courses.completeCourses();
 			} catch (IOException e) {
+				if (dialog.isShowing())
+					dialog.dismiss();
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setMessage("Un problème est survenu.\nNous n'avons pas pu récupérer la liste des cours")
+				builder.setTitle("UM2Cal")
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setMessage("Un problème est survenu.\nNous n'avons pas pu récupérer la liste des cours.")
 				.setCancelable(false)
 				.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {

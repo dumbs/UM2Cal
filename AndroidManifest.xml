@@ -9,6 +9,9 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".ProgramActivity" android:label="Parcours - Etape">
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH" />
+			</intent-filter>
 		</activity>
 
 	</application>
