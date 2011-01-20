@@ -1,6 +1,7 @@
 package com.dumbs.um2cal;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -59,11 +60,11 @@ public class ProgramActivity extends ListActivity implements OnItemClickListener
 		Program p = (Program)arg0.getItemAtPosition(arg2);
 		
 		// we set in preferences, the element we have selected
-		SharedPreferences.Editor ed = getSharedPreferences(Constant.app_name, MODE_PRIVATE).edit();
-		ed.putInt(Constant.program, p.getId());
+		SharedPreferences.Editor ed = getSharedPreferences(Constant.APP_NAME, MODE_PRIVATE).edit();
+		ed.putInt(Constant.PROGRAM, p.getId());
 		ed.commit();
 		
-		this.setResult(RESULT_OK, new Intent().putExtra(Constant.program, p.getId()));
+		this.setResult(RESULT_OK, new Intent().putExtra(Constant.PROGRAM, p.getId()));
 		this.finish();
 	}
 	
@@ -140,7 +141,7 @@ public class ProgramActivity extends ListActivity implements OnItemClickListener
 		}
 	}
 
-	private class ProgramsAdapter extends ArrayAdapter<Program> {
+	public class ProgramsAdapter extends ArrayAdapter<Program> {
 		Activity context;
 
 		public ProgramsAdapter(Activity context, Program[] programs) {
@@ -149,6 +150,12 @@ public class ProgramActivity extends ListActivity implements OnItemClickListener
 			this.context = context;
 		}
 
+		public ProgramsAdapter(Activity context, ArrayList<Program> programs) {
+			super(context, R.layout.steprow, programs);
+			
+			this.context = context;
+		}
+		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 

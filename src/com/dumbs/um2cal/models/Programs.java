@@ -33,7 +33,7 @@ public class Programs {
 		Gson gson = new Gson();
 
 		do {
-			String urlS = String.format(Constant.edt+"EtpGrid.php?rows=%1$d&page=%2$d", nbRows, page);
+			String urlS = String.format(Constant.EDT+"EtpGrid.php?rows=%1$d&page=%2$d", nbRows, page);
 			//Format the URL used to get steps.
 			URL url = new URL(urlS);
 			urlS = null;

@@ -44,7 +44,7 @@ public class Courses {
 		saturday = new GregorianCalendar(2011,0,24 + 6);
 
 		//Format the URL used to get information about the courses.
-		String urlS = String.format(Constant.edt+"OccList.php?start=%1$tY-%1$tm-%1$te&end=%2$tY-%2$tm-%2$te&sel=Etp%%3A+%3$s%4$s", monday, saturday, program, group);
+		String urlS = String.format(Constant.EDT+"OccList.php?start=%1$tY-%1$tm-%1$te&end=%2$tY-%2$tm-%2$te&sel=Etp%%3A+%3$s%4$s", monday, saturday, program, group);
 		URL url = new URL(urlS);
 		//Makes an JsonReader and set the json code got from URL. 
 		JsonReader reader = new JsonReader(new InputStreamReader(url.openStream(), "UTF-8"));

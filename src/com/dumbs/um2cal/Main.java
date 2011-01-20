@@ -34,7 +34,7 @@ public class Main extends ListActivity {
 	public static final int STEPS = Menu.FIRST + 0x01;
 	public static final int RELOAD = Menu.FIRST + 0x02;
 
-	public static final int PARAM = 0x01;
+	public static final int PARAM_CODE = 0x01;
 
 	private ProgressDialog dialog;
 	private Courses courses;
@@ -60,10 +60,10 @@ public class Main extends ListActivity {
 			AlertDialog alert = builder.create();
 			alert.show();
 		} else {		
-			SharedPreferences mPrefs = getSharedPreferences(Constant.app_name,MODE_PRIVATE);
-			int program = mPrefs.getInt(Constant.program, -1);
+			SharedPreferences mPrefs = getSharedPreferences(Constant.APP_NAME,MODE_PRIVATE);
+			int program = mPrefs.getInt(Constant.PROGRAM, -1);
 			if (program == -1) {
-				startActivityForResult(new Intent(this, ProgramActivity.class), PARAM);
+				startActivityForResult(new Intent(this, ProgramActivity.class), PARAM_CODE);
 			} else {
 				startCollectCourses(program);
 				setAdapter();
@@ -75,9 +75,14 @@ public class Main extends ListActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		if (requestCode == PARAM) {
+		if (requestCode == PARAM_CODE) {
 			if (resultCode == RESULT_OK) {
-				startCollectCourses(data.getExtras().getInt(Constant.program));
+				startCollectCourses(data.getExtras().getInt(Constant.PROGRAM));
+			}
+		}
+		if (requestCode == SearchableActivity.SEARCH_CODE) {
+			if (resultCode == RESULT_OK) {
+				startCollectCourses(data.getExtras().getInt(Constant.PROGRAM));
 			}
 		}
 	}
@@ -165,10 +170,10 @@ public class Main extends ListActivity {
 	private boolean applyMenuChoice(MenuItem item) {
 		switch (item.getItemId()) {
 		case STEPS:
-			startActivityForResult(new Intent(this, ProgramActivity.class), PARAM);
+			startActivityForResult(new Intent(this, ProgramActivity.class), PARAM_CODE);
 			return (true);
 		case RELOAD:
-			startCollectCourses(getSharedPreferences(Constant.app_name,MODE_PRIVATE).getInt(Constant.program, -1));
+			startCollectCourses(getSharedPreferences(Constant.APP_NAME,MODE_PRIVATE).getInt(Constant.PROGRAM, -1));
 			return (true);
 		default:
 			return (false);
