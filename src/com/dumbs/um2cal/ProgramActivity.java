@@ -59,7 +59,7 @@ public class ProgramActivity extends ListActivity implements OnItemClickListener
 		Program p = (Program)arg0.getItemAtPosition(arg2);
 		
 		// we set in preferences, the element we have selected
-		SharedPreferences.Editor ed = getPreferences(MODE_PRIVATE).edit();
+		SharedPreferences.Editor ed = getSharedPreferences(Constant.app_name, MODE_PRIVATE).edit();
 		ed.putInt(Constant.program, p.getId());
 		ed.commit();
 		

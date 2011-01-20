@@ -20,6 +20,7 @@ public class Courses {
 	public Courses (int program) {
 		//Transforms the json code in of instances Course.
 		courses = new ArrayList<Course>();
+		//String group = "%%2C160";
 		//group = "";
 		this.program = program;
 	}
@@ -29,12 +30,7 @@ public class Courses {
 	 * 
 	 */
 	public void completeCourses() throws IOException {
-		//TODO : group will be a parameter
-		//String group = "%%2C160";
 		String group = "";
-		//TODO : program will be a parameter
-		//String program = "247";
-		
 		//Create the different calendar we need
 		Calendar monday = new GregorianCalendar();
 		Calendar saturday = new GregorianCalendar();
