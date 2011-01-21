@@ -45,6 +45,7 @@ public class Main extends ListActivity {
 	public static final int PARAM_CODE = 0x01;
 	static final int DATE_DIALOG_ID = 0x00;
 
+	private boolean refresh = false;
 	private Calendar cal;
 	private ProgressDialog dialog;
 	private Courses courses;
@@ -136,9 +137,13 @@ public class Main extends ListActivity {
 		dialog = ProgressDialog.show(this, "", 
 				"Chargement de la liste des cours. Veuillez attendre...", true);
 
-		courses = new Courses(program);
-		cal = courses.getCalendar();
+		if (!refresh) {
+			courses = new Courses(program);
+			cal = courses.getCalendar();
+		}
 
+		refresh = false;
+		
 		background = new Thread(new Runnable() {
 
 			@Override
@@ -177,14 +182,11 @@ public class Main extends ListActivity {
 		SeparatedListAdapter adapter = new SeparatedListAdapter(this);
 
 		int dayOfWeek = Calendar.SUNDAY;
-		// TODO : For test uncomment on the following
-		//c = new GregorianCalendar(2010,0,24);
 		while (!courses.getCourses().isEmpty() && dayOfWeek++ != Calendar.SATURDAY) {
 			cal.set(Calendar.DAY_OF_WEEK, dayOfWeek);
 			adapter.addSection(new SimpleDateFormat("EEEE, dd MMMM").format(cal.getTime()),
 					new CourseAdapter(this, courses.getCourses(dayOfWeek)));
 		}
-		cal = null;
 
 		setListAdapter(adapter);
 	}
@@ -233,6 +235,7 @@ public class Main extends ListActivity {
 			startActivityForResult(new Intent(this, ProgramActivity.class), PARAM_CODE);
 			return (true);
 		case RELOAD:
+			refresh = true;
 			startCollectCourses(getSharedPreferences(Constant.APP_NAME,MODE_PRIVATE).getInt(Constant.PROGRAM, -1));
 			return (true);
 		case DATE:

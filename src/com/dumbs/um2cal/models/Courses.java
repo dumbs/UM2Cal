@@ -12,7 +12,6 @@ import com.google.gson.stream.JsonReader;
 
 
 // TODO : Add the operation of groups with a shortcut menu
-// TODO : Add the accessors for modify the dates for the menu "Go to Date " and "Today"
 public class Courses {
 	private List<Course> courses;
 	private int program;
