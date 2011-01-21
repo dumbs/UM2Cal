@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
 
+import android.widget.SlidingDrawer;
+
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 

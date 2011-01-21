@@ -16,6 +16,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,22 +33,31 @@ import com.dumbs.um2cal.models.Courses;
 public class Main extends ListActivity {
 
 
-	public static final int STEPS = Menu.FIRST + 0x01;
-	public static final int RELOAD = Menu.FIRST + 0x02;
-	public static final int DATE = Menu.FIRST + 0x03;
-	public static final int TO_DAY = Menu.FIRST + 0x04;
+	public static final int RELOAD = Menu.FIRST + 0x01;
+	public static final int DATE = Menu.FIRST + 0x02;
+	public static final int TO_DAY = Menu.FIRST + 0x03;
+	public static final int STEPS = Menu.FIRST + 0x04;
 
 	public static final int PARAM_CODE = 0x01;
 
 	private ProgressDialog dialog;
 	private Courses courses;
+	private Thread background;
+	private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			if (dialog.isShowing()) 
+				dialog.dismiss();
 
+			reloadData();
+		}
+	};
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-
+		
 		ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);		
 		if (cm != null && (cm.getActiveNetworkInfo()==null || !cm.getActiveNetworkInfo().isConnected())) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -94,22 +105,21 @@ public class Main extends ListActivity {
 
 		courses = new Courses(program);
 
-		runOnUiThread(new Runnable() {
+		background = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				completeCourses();
-				if (dialog.isShowing())
-					dialog.dismiss();
+				handler.sendMessage(handler.obtainMessage());
 			}
-
 		});
+		
+		background.start();
 	}
 
 	private void completeCourses() {
 		try {
 			courses.completeCourses();
-			reloadData();
 		} catch (IOException e) {
 			if (dialog.isShowing())
 				dialog.dismiss();

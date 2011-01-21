@@ -11,6 +11,8 @@ import java.util.List;
 import com.google.gson.stream.JsonReader;
 
 
+// TODO : Ajouter la gestion des groupes par un menu contextuel
+// TODO : Ajouter des accesseurs pour modifier les dates pour le menu "Allez a la date" et "Aujourd'hui"
 public class Courses {
 	private List<Course> courses;
 	private int program;

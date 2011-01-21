@@ -11,6 +11,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,31 +32,41 @@ public class ProgramActivity extends ListActivity implements OnItemClickListener
 	private Programs programs;
 	private ProgramsAdapter adapter;
 	private ProgressDialog dialog;
+	private Thread background;
+	private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			if (dialog.isShowing()) 
+				dialog.dismiss();
 
+			reloadData();
+		}
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		programs = new Programs();
+		
 		dialog = ProgressDialog.show(this, "", 
 				"Chargement de la liste des cours. Veuillez attendre...", true);
 
-		programs = new Programs();
-
-		runOnUiThread(new Runnable() {
+		background = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				completePrograms();
-				if (dialog.isShowing())
-					dialog.dismiss();
+				handler.sendMessage(handler.obtainMessage());
 			}
 		});
 
 		adapter = new ProgramsAdapter(this, programs.getPrograms());
 		getListView().setOnItemClickListener(this);
+		
+		background.start();
 	}
-
-
+	
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		Program p = (Program)arg0.getItemAtPosition(arg2);
@@ -83,21 +95,11 @@ public class ProgramActivity extends ListActivity implements OnItemClickListener
 	public void reloadData() {
 		adapter = new ProgramsAdapter(this, programs.getPrograms());
 		setListAdapter(adapter);
-		if (dialog.isShowing()) 
-			dialog.dismiss();
-	}
-	
-	@Override
-	public boolean onSearchRequested() {
-		System.out.println("Search...");
-		startSearch(null, false, null, false);
-		return super.onSearchRequested();
 	}
 
 	private void completePrograms() {
 		try {
 			programs.completePrograms();
-			reloadData();
 		} catch (IOException e) {
 			if (dialog.isShowing())
 				dialog.dismiss();
