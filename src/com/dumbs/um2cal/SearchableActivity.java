@@ -64,6 +64,8 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 				progs.add(p);
 			}
 		}
+		
+		setTitle(""+progs.size()+" résultats pour \""+query+"\"");
 
 		ProgramActivity.ProgramsAdapter adapter = new ProgramActivity().new ProgramsAdapter(this, progs);
 		this.setListAdapter(adapter);
@@ -73,7 +75,7 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		Program p = (Program)arg0.getItemAtPosition(arg2);
+		Program p = (Program) arg0.getItemAtPosition(arg2);
 		
 		// we set in preferences, the element we have selected
 		SharedPreferences.Editor ed = getSharedPreferences(Constant.APP_NAME, MODE_PRIVATE).edit();

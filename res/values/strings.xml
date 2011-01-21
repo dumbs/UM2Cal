@@ -3,5 +3,5 @@
     
     <string name="app_name">UM2Cal</string>
 <string name="app_label">UM2Cal</string>
-<string name="search_hint">Rechercher parcours</string>
+<string name="search_hint">Rechercher des parcours</string>
 </resources>

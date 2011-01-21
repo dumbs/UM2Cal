@@ -33,6 +33,8 @@ public class Main extends ListActivity {
 
 	public static final int STEPS = Menu.FIRST + 0x01;
 	public static final int RELOAD = Menu.FIRST + 0x02;
+	public static final int DATE = Menu.FIRST + 0x03;
+	public static final int TO_DAY = Menu.FIRST + 0x04;
 
 	public static final int PARAM_CODE = 0x01;
 
@@ -66,7 +68,6 @@ public class Main extends ListActivity {
 				startActivityForResult(new Intent(this, ProgramActivity.class), PARAM_CODE);
 			} else {
 				startCollectCourses(program);
-				setAdapter();
 			}
 		}
 	}
@@ -134,7 +135,7 @@ public class Main extends ListActivity {
 		int dayOfWeek = Calendar.SUNDAY;
 		Calendar c = new GregorianCalendar();
 		// TODO : For test uncomment on the following
-		c = new GregorianCalendar(2010,11,13);
+		//c = new GregorianCalendar(2010,0,24);
 		while (!courses.getCourses().isEmpty() && dayOfWeek++ != Calendar.SATURDAY) {
 			c.set(Calendar.DAY_OF_WEEK, dayOfWeek);
 			adapter.addSection(new SimpleDateFormat("EEEE, dd MMMM").format(c.getTime()),
@@ -146,8 +147,22 @@ public class Main extends ListActivity {
 	}
 
 	public void reloadData() {
-		setAdapter();
-
+		if (courses.getCourses().isEmpty()) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("UM2Cal")
+			.setIcon(android.R.drawable.ic_dialog_alert)
+			.setMessage("Nous n'avons pas trouvé de cours pour cette semaine.")
+			.setCancelable(false)
+			.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
+		} else {
+			setAdapter();
+		}
 	}
 
 	@Override
@@ -157,8 +172,10 @@ public class Main extends ListActivity {
 	}
 
 	private void populateMenu(Menu menu) {
-		menu.add(Menu.NONE, RELOAD, Menu.NONE, "Actualiser");
-		menu.add(Menu.NONE, STEPS, Menu.NONE, "Parcours");
+		menu.add(Menu.NONE, RELOAD, Menu.NONE, "Actualiser").setIcon(R.drawable.ic_menu_refresh);
+		menu.add(Menu.NONE, DATE, Menu.NONE, "Allez à la date").setIcon(android.R.drawable.ic_menu_week);
+		menu.add(Menu.NONE, TO_DAY, Menu.NONE, "Aujourd'hui").setIcon(android.R.drawable.ic_menu_today);
+		menu.add(Menu.NONE, STEPS, Menu.NONE, "Parcours").setIcon(android.R.drawable.ic_menu_manage);
 	}
 
 	@Override
