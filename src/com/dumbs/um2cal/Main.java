@@ -3,11 +3,12 @@ package com.dumbs.um2cal;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -24,11 +25,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.dumbs.um2cal.models.Constant;
 import com.dumbs.um2cal.models.Course;
 import com.dumbs.um2cal.models.Courses;
+
+// TODO : Add the detailed view, of courses
 
 public class Main extends ListActivity {
 
@@ -39,19 +43,48 @@ public class Main extends ListActivity {
 	public static final int STEPS = Menu.FIRST + 0x04;
 
 	public static final int PARAM_CODE = 0x01;
+	static final int DATE_DIALOG_ID = 0x00;
 
+	private Calendar cal;
 	private ProgressDialog dialog;
 	private Courses courses;
 	private Thread background;
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			if (dialog.isShowing()) 
+			if (dialog.isShowing())
 				dialog.dismiss();
 
 			reloadData();
 		}
 	};
+	
+	private DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
+		
+		@Override
+		public void onDateSet(DatePicker view, int year, int monthOfYear,
+				int dayOfMonth) {
+			
+			dialog.show();
+
+			SharedPreferences mPrefs = getSharedPreferences(Constant.APP_NAME,MODE_PRIVATE);
+			courses = new Courses(mPrefs.getInt(Constant.PROGRAM, -1));
+			courses.setDate(year, monthOfYear, dayOfMonth);
+
+			cal = courses.getCalendar();
+			
+			Thread th = new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					completeCourses();
+					handler.sendMessage(handler.obtainMessage());					
+				}
+			});
+			th.start();
+		}
+	};
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -104,6 +137,7 @@ public class Main extends ListActivity {
 				"Chargement de la liste des cours. Veuillez attendre...", true);
 
 		courses = new Courses(program);
+		cal = courses.getCalendar();
 
 		background = new Thread(new Runnable() {
 
@@ -143,15 +177,14 @@ public class Main extends ListActivity {
 		SeparatedListAdapter adapter = new SeparatedListAdapter(this);
 
 		int dayOfWeek = Calendar.SUNDAY;
-		Calendar c = new GregorianCalendar();
 		// TODO : For test uncomment on the following
 		//c = new GregorianCalendar(2010,0,24);
 		while (!courses.getCourses().isEmpty() && dayOfWeek++ != Calendar.SATURDAY) {
-			c.set(Calendar.DAY_OF_WEEK, dayOfWeek);
-			adapter.addSection(new SimpleDateFormat("EEEE, dd MMMM").format(c.getTime()),
+			cal.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+			adapter.addSection(new SimpleDateFormat("EEEE, dd MMMM").format(cal.getTime()),
 					new CourseAdapter(this, courses.getCourses(dayOfWeek)));
 		}
-		c = null;
+		cal = null;
 
 		setListAdapter(adapter);
 	}
@@ -202,9 +235,32 @@ public class Main extends ListActivity {
 		case RELOAD:
 			startCollectCourses(getSharedPreferences(Constant.APP_NAME,MODE_PRIVATE).getInt(Constant.PROGRAM, -1));
 			return (true);
+		case DATE:
+			showDialog(DATE_DIALOG_ID);
+			return (true);
+		case TO_DAY:
+			courses.setDateToDay();
+
+			SharedPreferences mPrefs = getSharedPreferences(Constant.APP_NAME,MODE_PRIVATE);
+			startCollectCourses(mPrefs.getInt(Constant.PROGRAM, -1));
+			return (true);
 		default:
 			return (false);
 		}
+	}
+	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+	    case DATE_DIALOG_ID:
+	    	Calendar date = Calendar.getInstance();
+	        return new DatePickerDialog(this,
+	        		d,
+	        		date.get(Calendar.YEAR),
+	        		date.get(Calendar.MONTH),
+	        		date.get(Calendar.DAY_OF_MONTH));
+	    }
+	    return null;
 	}
 
 	private class ViewWrapper {

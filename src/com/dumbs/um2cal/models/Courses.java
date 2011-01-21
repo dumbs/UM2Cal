@@ -11,20 +11,28 @@ import java.util.List;
 import com.google.gson.stream.JsonReader;
 
 
-// TODO : Ajouter la gestion des groupes par un menu contextuel
-// TODO : Ajouter des accesseurs pour modifier les dates pour le menu "Allez a la date" et "Aujourd'hui"
+// TODO : Add the operation of groups with a shortcut menu
+// TODO : Add the accessors for modify the dates for the menu "Go to Date " and "Today"
 public class Courses {
 	private List<Course> courses;
 	private int program;
 	//private String group;
-	
+	private Calendar monday;
+	private Calendar saturday;
 	
 	public Courses (int program) {
-		//Transforms the json code in of instances Course.
 		courses = new ArrayList<Course>();
 		//String group = "%%2C160";
 		//group = "";
 		this.program = program;
+		
+		//Create the different calendar we need
+		monday = new GregorianCalendar();
+		saturday = new GregorianCalendar();
+		
+		//Set the calendars day of week to Monday and Saturday
+		monday.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+		saturday.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
 	}
 
 	/**
@@ -33,18 +41,7 @@ public class Courses {
 	 */
 	public void completeCourses() throws IOException {
 		String group = "";
-		//Create the different calendar we need
-		Calendar monday = new GregorianCalendar();
-		Calendar saturday = new GregorianCalendar();
-
-		//Set the calendars day of week to Monday and Saturday
-		monday.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-		saturday.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-
-		//TODO : For test uncomment on the following
-//		monday = new GregorianCalendar(2011,0,24);
-//		saturday = new GregorianCalendar(2011,0,24 + 6);
-
+		
 		//Format the URL used to get information about the courses.
 		String urlS = String.format(Constant.EDT+"OccList.php?start=%1$tY-%1$tm-%1$te&end=%2$tY-%2$tm-%2$te&sel=Etp%%3A+%3$s%4$s", monday, saturday, program, group);
 		System.out.println(urlS);
@@ -150,6 +147,29 @@ public class Courses {
 				result.add(c);
 		}
 		return (result);
+	}
+
+	public void setDate(int year, int month, int day) {
+		monday.set(Calendar.YEAR, year);
+		monday.set(Calendar.MONTH, month);
+		monday.set(Calendar.DAY_OF_MONTH, day);
+		
+		saturday = new GregorianCalendar(year, month, day + 5);
+		saturday.set(Calendar.YEAR, year);
+		saturday.set(Calendar.MONTH, month);
+		saturday.set(Calendar.DAY_OF_MONTH, day + 5);
+	}
+	
+	public void setDateToDay() {
+		GregorianCalendar c = new GregorianCalendar();
+		monday = saturday = c;
+		monday.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+		saturday.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+		c = null;
+	}
+	
+	public Calendar getCalendar() {
+		return (monday);
 	}
 
 	@Override

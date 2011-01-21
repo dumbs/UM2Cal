@@ -52,7 +52,7 @@ public class Course {
 		this.formatTitle();
 	}
 
-	// TODO : A remplacer tous ca par des Expression reguliere.
+	// TODO : Replace all this with regular expressions.
 	private void formatTitle() {
 		int index;
 		
@@ -72,7 +72,6 @@ public class Course {
 		}
 		index = 0;
 		this.type = title.substring(index, 2);
-		// TODO : A changer car vraiment pas beau :(
 		this.title = title.substring(3).replaceAll("&amp;", "&");
 	}
 	
