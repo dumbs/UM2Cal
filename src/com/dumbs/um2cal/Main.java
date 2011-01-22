@@ -92,6 +92,9 @@ public class Main extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
+		// We change the title for it shows the section where we are.
+		setTitle("UM2Cal - Cours");
+		
 		ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);		
 		if (cm != null && (cm.getActiveNetworkInfo()==null || !cm.getActiveNetworkInfo().isConnected())) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
