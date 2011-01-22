@@ -118,6 +118,17 @@ public class Main extends ListActivity {
 	}
 
 	@Override
+	protected void onStop() {
+		super.onStop();
+		if (dialog.isShowing()) {
+			dialog.dismiss();
+		}
+		if (background.isAlive()) {
+			background.stop();
+		}		
+	}
+
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
@@ -141,7 +152,6 @@ public class Main extends ListActivity {
 			courses = new Courses(program);
 			cal = courses.getCalendar();
 		}
-
 		refresh = false;
 		
 		background = new Thread(new Runnable() {
