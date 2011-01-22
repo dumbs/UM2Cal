@@ -24,6 +24,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -32,9 +34,7 @@ import com.dumbs.um2cal.models.Constant;
 import com.dumbs.um2cal.models.Course;
 import com.dumbs.um2cal.models.Courses;
 
-// TODO : Add the detailed view, of courses
-
-public class Main extends ListActivity {
+public class Main extends ListActivity implements OnItemClickListener {
 
 
 	public static final int RELOAD = Menu.FIRST + 0x01;
@@ -94,6 +94,7 @@ public class Main extends ListActivity {
 		
 		// We change the title for it shows the section where we are.
 		setTitle("UM2Cal - Cours");
+		getListView().setOnItemClickListener(this);
 		
 		ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);		
 		if (cm != null && (cm.getActiveNetworkInfo()==null || !cm.getActiveNetworkInfo().isConnected())) {
@@ -123,10 +124,10 @@ public class Main extends ListActivity {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if (dialog.isShowing()) {
+		if (dialog != null && dialog.isShowing()) {
 			dialog.dismiss();
 		}
-		if (background.isAlive()) {
+		if (background != null && background.isAlive()) {
 			background.stop();
 		}		
 	}
@@ -279,6 +280,17 @@ public class Main extends ListActivity {
 	    return null;
 	}
 
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		Intent intent = new Intent(this, DetailActivity.class);
+		
+		SeparatedListAdapter adapter = (SeparatedListAdapter)arg0.getAdapter();
+		
+		intent.putExtra("course", (Course)adapter.getItem(arg2));
+		startActivity(intent);
+	}
+	
 	private class ViewWrapper {
 		View base;
 
@@ -355,6 +367,7 @@ public class Main extends ListActivity {
 		}
 
 	}
+
 
 
 }

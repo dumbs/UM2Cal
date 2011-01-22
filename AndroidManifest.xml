@@ -8,20 +8,17 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".ProgramActivity" android:label="UM2CAL - Parcours">
-			<intent-filter>
-				<action android:name="android.intent.action.SEARCH" />
-			</intent-filter>
-		</activity>
+		<activity android:name=".ProgramActivity" android:label="UM2CAL - Parcours"></activity>
+		<activity android:name=".DetailActivity" android:label="UM2CAL - Détail"></activity>
 
 		<activity android:name=".SearchableActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH" />
 			</intent-filter>
-			<meta-data android:resource="@xml/searchable" android:name="android.app.searchable"/>
+			<meta-data android:resource="@xml/searchable" android:name="android.app.searchable" />
 		</activity>
 		<meta-data android:name="android.app.default_searchable"
-               android:value=".SearchableActivity" />
+			android:value=".SearchableActivity" />
 	</application>
 
 

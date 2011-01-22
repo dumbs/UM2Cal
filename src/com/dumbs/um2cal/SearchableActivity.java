@@ -60,7 +60,7 @@ public class SearchableActivity extends ListActivity implements OnItemClickListe
 		ArrayList<Program> progs = new ArrayList<Program>();
 
 		for (Program p : programs.getPrograms()) {
-			if (p.getName().contains(query)) {
+			if (p.getName().toLowerCase().contains(query.toLowerCase())) {
 				progs.add(p);
 			}
 		}

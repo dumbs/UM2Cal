@@ -5,18 +5,26 @@
 
 	<TextView android:text="@+id/title" android:id="@+id/title"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:textStyle="bold" android:layout_marginBottom="20px" android:textColor="#FFF"/>
+		android:textStyle="bold" android:layout_marginBottom="20px"
+		android:textColor="#FFF" />
 
 	<TextView android:text="@+id/room" android:id="@+id/room"
 		android:layout_width="fill_parent" android:layout_height="wrap_content" />
 
 	<TextView android:text="@+id/group" android:id="@+id/group"
-		android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="10px"/>
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_marginBottom="10px" />
 
 	<TextView android:text="@+id/date" android:id="@+id/date"
-		android:layout_width="fill_parent" android:layout_height="wrap_content" android:textStyle="bold" android:textColor="#39F"/>
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:textStyle="bold" android:textColor="#39F" />
 
 	<TextView android:text="@+id/hourly" android:id="@+id/hourly"
-		android:layout_width="fill_parent" android:layout_height="wrap_content" android:textStyle="bold" android:textColor="#39F"/>
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:textStyle="bold" android:textColor="#39F"
+		android:layout_marginBottom="20px" />
 
+	<TextView android:text="Description:" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:textStyle="bold"></TextView>
+<TextView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/description" android:text="@+id/description"></TextView>
 </LinearLayout>

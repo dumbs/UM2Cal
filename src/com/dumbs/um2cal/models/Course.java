@@ -1,9 +1,12 @@
 package com.dumbs.um2cal.models;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 
-public class Course {
+public class Course implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	private int id;
 	private int model;
 	private boolean allDay;
